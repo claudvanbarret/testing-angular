@@ -50,11 +50,29 @@ describe('TodosComponent', () => {
   });
 
   it('should set the message property if server returns an error when adding a new todo', () => {
-    let error = 'error from the server'
+    let error = 'error from the server';
     spyOn(service, 'add').and.returnValue(Observable.throw(error));
 
     component.add();
 
     expect(component.message).toEqual(error);
+  });
+
+  it('should call the server to delete a todo item if the user confirms', () => {
+    spyOn(window, 'confirm').and.returnValue(true);
+    spyOn(service, 'delete').and.returnValue(Observable.empty());
+
+    component.delete(1);
+
+    expect(service.delete).toHaveBeenCalledWith(1);
+  });
+
+  it('should NOT call the server to delete a todo item if the user cancels', () => {
+    spyOn(window, 'confirm').and.returnValue(false);
+    spyOn(service, 'delete').and.returnValue(Observable.empty());
+
+    component.delete(1);
+
+    expect(service.delete).not.toHaveBeenCalled();
   });
 });
